@@ -1,0 +1,9 @@
+services:
+  backend:
+    build: .
+    container_name: itracker_backend
+    ports:
+      - "5001:5001"
+    restart: always
+    env_file:
+      - .env

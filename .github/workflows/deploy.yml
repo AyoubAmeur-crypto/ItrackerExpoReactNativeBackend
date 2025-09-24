@@ -1,0 +1,83 @@
+name: Deploy itracker Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Test SSH connection
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: root
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: 22
+          script: |
+            echo "SSH connection successful!"
+            whoami
+            pwd
+            docker --version
+            
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: root
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: 22
+          source: "."
+          target: "/var/www/itrackerBackend"
+          overwrite: true
+          
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: root
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: 22
+          envs: MONGODB_URI,PORT,SESSION_KEY,FRONTEND_URL,EMAIL_SENDER,EMAIL_PASS,NODE_ENV
+          script: |
+            cd /var/www/itrackerBackend
+            
+            # Create .env file from secrets
+            cat > .env << EOF
+            PORT=${PORT}
+            MONGODB_URI=${MONGODB_URI}
+            FRONTEND_URL=${FRONTEND_URL}
+            NODE_ENV=${NODE_ENV}
+            SESSION_KEY=${SESSION_KEY}
+            EMAIL_SENDER=${EMAIL_SENDER}
+            EMAIL_PASS=${EMAIL_PASS}
+            EOF
+            
+            # Stop existing containers
+            echo "Stopping existing containers..."
+            docker compose down || true
+            
+            # Build and start new containers
+            echo "Building and starting containers..."
+            docker compose build --no-cache
+            docker compose up -d
+            
+            # Show container status
+            echo "Container status:"
+            docker compose ps
+            docker compose logs --tail=20 backend
+            
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          PORT: ${{ secrets.PORT }}
+          SESSION_KEY: ${{ secrets.SESSION_KEY }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          NODE_ENV: ${{ secrets.NODE_ENV }}
