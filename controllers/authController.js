@@ -1,6 +1,10 @@
 const User = require('../models/User')
 const jwt = require("jsonwebtoken")
 const OtpCode = require("../models/OtpCode")
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+
 const nodemailer = require("nodemailer")
 const bcrypt = require("bcrypt")
 exports.signUp = async (req,res)=>{
@@ -239,33 +243,12 @@ const otpGenerated = Math.floor(10000 + Math.random() * 90000).toString()
 
         })
 
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail', 
-    auth: {
-        user: process.env.EMAIL_SENDER,
-        pass: process.env.EMAIL_PASS, 
-    }
-})
-
-
-
-     
-
-  console.log("check otp genrated",otpGenerated);
-  console.log("the email sent",checkUser.email);
-  console.log("check the sender : ",process.env.EMAIL_SENDER);
+        const msg = {
+  to: checkUser.email,
+  from: 'itracker-support@aybhub.dev',
+  subject: 'Your iTracker Verification Code',
   
-  
-  
-
-   await transporter.sendMail({
-    from: '"iTracker Support" <Itracker-Support@aybhub.dev>', 
-    replyTo: 'Itracker-Support@aybhub.dev', 
-    to: checkUser.email,
-    subject: 'Your iTracker Verification Code',
-    html: `
-<!DOCTYPE html>
+  html: `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8" />
@@ -436,9 +419,31 @@ const transporter = nodemailer.createTransport({
 </div>
 
 </body>
-</html>
-    `
-})
+</html>`,
+}
+
+
+sgMail
+  .send(msg)
+  .then(() => {
+    console.log('Email sent')
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+
+
+
+     
+
+  console.log("check otp genrated",otpGenerated);
+  console.log("the email sent",checkUser.email);
+  console.log("check the sender : ",process.env.EMAIL_SENDER);
+  
+  
+  
+
+
 
   res.status(201).json({
     success:true,
@@ -537,35 +542,12 @@ const otpGenerated = Math.floor(10000 + Math.random() * 90000).toString()
 
         })
 
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail', 
-    auth: {
-        user: process.env.EMAIL_SENDER,
-        pass: process.env.EMAIL_PASS, 
-    },
-    tls: {
-        rejectUnauthorized: false
-    }
-})
-
-
-
-     
-
-  console.log("check otp genrated",otpGenerated);
-  console.log("the email sent",checkUser.email);
-  console.log("check the sender : ",process.env.EMAIL_SENDER);
+          const msg = {
+  to: checkUser.email,
+  from: 'itracker-support@aybhub.dev',
+  subject: 'Your iTracker Verification Code',
   
-  
-  
-
-   await transporter.sendMail({
-    from: '"iTracker Support" <Itracker-Support@aybhub.dev>', 
-    replyTo: 'Itracker-Support@aybhub.dev', 
-    to: checkUser.email,
-    subject: 'Your iTracker Verification Code',
-    html: `
+  html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -739,7 +721,33 @@ const transporter = nodemailer.createTransport({
 </body>
 </html>
     `
-})
+}
+
+
+sgMail
+  .send(msg)
+  .then(() => {
+    console.log('Email sent')
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+
+
+
+
+
+
+     
+
+  console.log("check otp genrated",otpGenerated);
+  console.log("the email sent",checkUser.email);
+  console.log("check the sender : ",process.env.EMAIL_SENDER);
+  
+  
+  
+
+ 
 
   res.status(201).json({
     success:true,
