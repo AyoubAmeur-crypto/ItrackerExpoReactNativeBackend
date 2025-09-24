@@ -1,0 +1,16 @@
+const express = require("express")
+const verifyToken = require("../middleware/verifytoken")
+const {addExpense,getAllUserExpnese,getAllExpenses,getAllUserEarnings,getNegativeEarning,getsEarning,removeTransaction,getTotalBalance,getLast4MonthsBalance,getCurrentMonthEarnings} = require("../controllers/expneseController")
+const router = express.Router()
+
+router.get("/getAllExpenses",verifyToken,getAllUserExpnese)
+router.post("/addExpense",verifyToken,addExpense)
+router.get("/getEarning",verifyToken,getsEarning)
+router.get("/getNegatives",verifyToken,getNegativeEarning)
+router.get("/getBalance",verifyToken,getTotalBalance)
+router.get("/last4monthBalance",verifyToken,getLast4MonthsBalance)
+router.get("/lastMonthEarningDetails",verifyToken,getCurrentMonthEarnings)
+router.delete("/deleteTransaction/:transactionId",verifyToken,removeTransaction)
+router.get("/getAllEarnings",verifyToken,getAllUserEarnings)
+router.get("/getAllUserExpenses",verifyToken,getAllExpenses)
+module.exports = router
