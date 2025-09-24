@@ -60,6 +60,11 @@ jobs:
             SENDGRID_API_KEY=${SENDGRID_API_KEY}
             EOF
             
+            # Debug: Check if .env file was created correctly (remove in production)
+            echo "Contents of .env file:"
+            cat .env
+            echo "SENDGRID_API_KEY length: $(echo $SENDGRID_API_KEY | wc -c)"
+            
             # Stop existing containers
             echo "Stopping existing containers..."
             docker compose down || true
@@ -82,3 +87,4 @@ jobs:
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           NODE_ENV: ${{ secrets.NODE_ENV }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
