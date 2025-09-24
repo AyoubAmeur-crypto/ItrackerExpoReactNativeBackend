@@ -2,6 +2,8 @@ const User = require('../models/User')
 const jwt = require("jsonwebtoken")
 const OtpCode = require("../models/OtpCode")
 const sgMail = require('@sendgrid/mail')
+require('dotenv').config()
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 
