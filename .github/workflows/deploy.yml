@@ -44,7 +44,7 @@ jobs:
           username: root
           key: ${{ secrets.DO_SSH_KEY }}
           port: 22
-          envs: MONGODB_URI,PORT,SESSION_KEY,FRONTEND_URL,EMAIL_SENDER,EMAIL_PASS,NODE_ENV
+          envs: MONGODB_URI,PORT,SESSION_KEY,FRONTEND_URL,EMAIL_SENDER,EMAIL_PASS,NODE_ENV,SENDGRID_API_KEY
           script: |
             cd /var/www/itrackerBackend
             
@@ -57,6 +57,7 @@ jobs:
             SESSION_KEY=${SESSION_KEY}
             EMAIL_SENDER=${EMAIL_SENDER}
             EMAIL_PASS=${EMAIL_PASS}
+            SENDGRID_API_KEY=${SENDGRID_API_KEY}
             EOF
             
             # Stop existing containers
